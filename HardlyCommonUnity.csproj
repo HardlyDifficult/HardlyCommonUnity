@@ -25,7 +25,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\TacticalArena\Assets\Scripts\Dependancies\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -38,6 +38,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\Layer.cs" />
     <Compile Include="Extensions\BoundsExtensions.cs" />
     <Compile Include="Helpers\CoroutineHelpers.cs" />
     <Compile Include="Extensions\LayerMaskExtensions.cs" />
