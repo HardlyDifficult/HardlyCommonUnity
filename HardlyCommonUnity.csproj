@@ -30,6 +30,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Bot|AnyCPU'">
+    <OutputPath>bin\Bot\</OutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="UnityEngine">
@@ -38,11 +41,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\EventType.cs" />
     <Compile Include="Data\Layer.cs" />
     <Compile Include="Data\Sort\RaycastHitSortByPointMag.cs" />
     <Compile Include="Extensions\BoundsExtensions.cs" />
     <Compile Include="Helpers\CoroutineHelpers.cs" />
     <Compile Include="Extensions\LayerMaskExtensions.cs" />
+    <Compile Include="MonoBehaviour\OnXDoY.cs" />
+    <Compile Include="MonoBehaviour\OnXInstantiate.cs" />
     <Compile Include="MonoBehaviour\OnXSetActiveFalse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Extensions\QuaternionExtensions.cs" />
