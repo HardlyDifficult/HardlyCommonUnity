@@ -7,7 +7,7 @@ namespace HD
   public class OnXInstantiate : OnXDoY
   {
     [SerializeField]
-    GameObject[] prefabList;
+    GameObject[] prefabList = null;
 
     protected override void DoChange()
     {

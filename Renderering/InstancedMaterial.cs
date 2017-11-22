@@ -17,10 +17,14 @@ namespace HD
     /// </summary>
     public readonly Renderer renderer;
 
-    static readonly int mainTexturePropertyId;
+    static readonly int 
+      mainColorPropertyId,
+      mainTexturePropertyId;
 
     readonly MaterialPropertyBlock materialPropertyBlock;
     readonly Material material;
+
+    readonly HashSet<int> instancedProperties = new HashSet<int>();
     #endregion
 
     #region Properties
@@ -156,24 +160,34 @@ namespace HD
     #region Init
     static InstancedMaterial()
     {
+      mainColorPropertyId = Shader.PropertyToID("_Color");
       mainTexturePropertyId = Shader.PropertyToID("_MainTex");
     }
 
-    public InstancedMaterial(
-      GameObject gameObject)
+    public static InstancedMaterial GetMaterial(
+      Renderer renderer)
     {
-      Debug.Assert(gameObject != null);
-
-      renderer = gameObject.GetComponent<Renderer>();
-      material = renderer.sharedMaterial;
-
-      Debug.Assert(renderer != null);
-      Debug.Assert(material != null);
-
-      materialPropertyBlock = new MaterialPropertyBlock();
+      return new InstancedMaterial(renderer);
     }
 
-    public InstancedMaterial(
+    public static InstancedMaterial[] GetMaterials(
+      Renderer renderer)
+    {
+      Material[] materialList = renderer.sharedMaterials;
+      InstancedMaterial[] instancedMaterialList = new InstancedMaterial[materialList.Length];
+      for (int i = 0; i < materialList.Length; i++)
+      {
+        instancedMaterialList[i] = new InstancedMaterial(renderer, materialList[i]);
+      }
+
+      return instancedMaterialList;
+    }
+
+    InstancedMaterial(
+      Renderer renderer) 
+      : this(renderer, renderer.sharedMaterial) { }
+
+    InstancedMaterial(
       Renderer renderer,
       Material material)
     {
@@ -193,6 +207,7 @@ namespace HD
     public void ClearPropertyBlock()
     {
       materialPropertyBlock.Clear();
+      instancedProperties.Clear();
     }
 
     public void CopyPropertiesFromMaterial(
@@ -267,11 +282,19 @@ namespace HD
       {
         materialPropertyBlock.SetColor(propertyId, color);
         renderer.SetPropertyBlock(materialPropertyBlock);
+        instancedProperties.Add(propertyId);
       }
       else
       {
         material.SetColor(propertyId, color);
       }
+    }
+
+    public void SetMainColor(
+      Color color,
+      bool isInstanced)
+    {
+      SetColor(mainColorPropertyId, color, isInstanced);
     }
 
     public void SetColorArray(
@@ -336,6 +359,7 @@ namespace HD
       {
         materialPropertyBlock.SetFloat(propertyId, value);
         renderer.SetPropertyBlock(materialPropertyBlock);
+        instancedProperties.Add(propertyId);
       }
       else
       {
@@ -361,6 +385,7 @@ namespace HD
       {
         materialPropertyBlock.SetFloatArray(propertyId, value);
         renderer.SetPropertyBlock(materialPropertyBlock);
+        instancedProperties.Add(propertyId);
       }
       else
       {
@@ -386,6 +411,7 @@ namespace HD
       {
         materialPropertyBlock.SetFloatArray(propertyId, value);
         renderer.SetPropertyBlock(materialPropertyBlock);
+        instancedProperties.Add(propertyId);
       }
       else
       {
@@ -446,6 +472,7 @@ namespace HD
       {
         materialPropertyBlock.SetMatrix(propertyId, value);
         renderer.SetPropertyBlock(materialPropertyBlock);
+        instancedProperties.Add(propertyId);
       }
       else
       {
@@ -471,6 +498,7 @@ namespace HD
       {
         materialPropertyBlock.SetMatrixArray(propertyId, value);
         renderer.SetPropertyBlock(materialPropertyBlock);
+        instancedProperties.Add(propertyId);
       }
       else
       {
@@ -496,6 +524,7 @@ namespace HD
       {
         materialPropertyBlock.SetMatrixArray(propertyId, value);
         renderer.SetPropertyBlock(materialPropertyBlock);
+        instancedProperties.Add(propertyId);
       }
       else
       {
@@ -542,6 +571,7 @@ namespace HD
       {
         materialPropertyBlock.SetTexture(propertyId, value);
         renderer.SetPropertyBlock(materialPropertyBlock);
+        instancedProperties.Add(propertyId);
       }
       else
       {
@@ -597,6 +627,7 @@ namespace HD
       {
         materialPropertyBlock.SetVector(propertyId, value);
         renderer.SetPropertyBlock(materialPropertyBlock);
+        instancedProperties.Add(propertyId);
       }
       else
       {
@@ -622,6 +653,7 @@ namespace HD
       {
         materialPropertyBlock.SetVectorArray(propertyId, value);
         renderer.SetPropertyBlock(materialPropertyBlock);
+        instancedProperties.Add(propertyId);
       }
       else
       {
@@ -647,6 +679,7 @@ namespace HD
       {
         materialPropertyBlock.SetVectorArray(propertyId, value);
         renderer.SetPropertyBlock(materialPropertyBlock);
+        instancedProperties.Add(propertyId);
       }
       else
       {
@@ -663,42 +696,36 @@ namespace HD
     }
 
     public Color GetColor(
-      string propertyName,
-      bool isInstanced)
+      string propertyName)
     {
       int propertyId = Shader.PropertyToID(propertyName);
-      return GetColor(propertyId, isInstanced);
+      return GetColor(propertyId);
     }
 
     public Color GetColor(
-      int propertyId,
-      bool isInstanced)
+      int propertyId)
     {
-      if (isInstanced)
-      {
-        return GetVector(propertyId, isInstanced);
-      }
-      else
-      {
-        return material.GetColor(propertyId);
-      }
+      return GetVector(propertyId);
+    }
+
+    public Color GetMainColor()
+    {
+      return GetColor(mainColorPropertyId);
     }
 
     public Color[] GetColorArray(
-      string propertyName,
-      bool isInstanced)
+      string propertyName)
     {
       int propertyId = Shader.PropertyToID(propertyName);
-      return GetColorArray(propertyId, isInstanced);
+      return GetColorArray(propertyId);
     }
 
     public Color[] GetColorArray(
-      int propertyId,
-      bool isInstanced)
+      int propertyId)
     {
-      if (isInstanced)
+      if (instancedProperties.Contains(propertyId))
       {
-        Vector4[] vectorList = GetVectorArray(propertyId, isInstanced);
+        Vector4[] vectorList = GetVectorArray(propertyId);
         Color[] colorList = new Color[vectorList.Length];
         for (int i = 0; i < vectorList.Length; i++)
         {
@@ -714,18 +741,16 @@ namespace HD
     }
 
     public float GetFloat(
-      string propertyName,
-      bool isInstanced)
+      string propertyName)
     {
       int propertyId = Shader.PropertyToID(propertyName);
-      return GetFloat(propertyId, isInstanced);
+      return GetFloat(propertyId);
     }
 
     public float GetFloat(
-      int propertyId,
-      bool isInstanced)
+      int propertyId)
     {
-      if (isInstanced)
+      if (instancedProperties.Contains(propertyId))
       {
         return materialPropertyBlock.GetFloat(propertyId);
       }
@@ -736,18 +761,16 @@ namespace HD
     }
 
     public float[] GetFloatArray(
-      string propertyName,
-      bool isInstanced)
+      string propertyName)
     {
       int propertyId = Shader.PropertyToID(propertyName);
-      return GetFloatArray(propertyId, isInstanced);
+      return GetFloatArray(propertyId);
     }
 
     public float[] GetFloatArray(
-      int propertyId,
-      bool isInstanced)
+      int propertyId)
     {
-      if (isInstanced)
+      if (instancedProperties.Contains(propertyId))
       {
         return materialPropertyBlock.GetFloatArray(propertyId);
       }
@@ -776,10 +799,9 @@ namespace HD
       return material.GetInt(propertyId);
     }
 
-    public Texture GetMainTexture(
-      bool isInstanced)
+    public Texture GetMainTexture()
     {
-      if (isInstanced)
+      if (instancedProperties.Contains(mainTexturePropertyId))
       {
         return materialPropertyBlock.GetTexture(mainTexturePropertyId);
       }
@@ -790,18 +812,16 @@ namespace HD
     }
 
     public Matrix4x4 GetMatrix(
-      string propertyName,
-      bool isInstanced)
+      string propertyName)
     {
       int propertyId = Shader.PropertyToID(propertyName);
-      return GetMatrix(propertyId, isInstanced);
+      return GetMatrix(propertyId);
     }
 
     public Matrix4x4 GetMatrix(
-      int propertyId,
-      bool isInstanced)
+      int propertyId)
     {
-      if (isInstanced)
+      if (instancedProperties.Contains(propertyId))
       {
         return materialPropertyBlock.GetMatrix(propertyId);
       }
@@ -812,18 +832,16 @@ namespace HD
     }
 
     public Matrix4x4[] GetMatrixArray(
-      string propertyName,
-      bool isInstanced)
+      string propertyName)
     {
       int propertyId = Shader.PropertyToID(propertyName);
-      return GetMatrixArray(propertyId, isInstanced);
+      return GetMatrixArray(propertyId);
     }
 
     public Matrix4x4[] GetMatrixArray(
-      int propertyId,
-      bool isInstanced)
+      int propertyId)
     {
-      if (isInstanced)
+      if (instancedProperties.Contains(propertyId))
       {
         return materialPropertyBlock.GetMatrixArray(propertyId);
       }
@@ -846,18 +864,16 @@ namespace HD
     }
 
     public Texture GetTexture(
-      string propertyName,
-      bool isInstanced)
+      string propertyName)
     {
       int propertyId = Shader.PropertyToID(propertyName);
-      return GetTexture(propertyId, isInstanced);
+      return GetTexture(propertyId);
     }
 
     public Texture GetTexture(
-      int propertyId,
-      bool isInstanced)
+      int propertyId)
     {
-      if (isInstanced)
+      if (instancedProperties.Contains(propertyId))
       {
         return materialPropertyBlock.GetTexture(propertyId);
       }
@@ -894,18 +910,16 @@ namespace HD
     }
 
     public Vector4 GetVector(
-      string propertyName,
-      bool isInstanced)
+      string propertyName)
     {
       int propertyId = Shader.PropertyToID(propertyName);
-      return GetVector(propertyId, isInstanced);
+      return GetVector(propertyId);
     }
 
     public Vector4 GetVector(
-      int propertyId,
-      bool isInstanced)
+      int propertyId)
     {
-      if (isInstanced)
+      if (instancedProperties.Contains(propertyId))
       {
         return materialPropertyBlock.GetVector(propertyId);
       }
@@ -916,18 +930,16 @@ namespace HD
     }
 
     public Vector4[] GetVectorArray(
-      string propertyName,
-      bool isInstanced)
+      string propertyName)
     {
       int propertyId = Shader.PropertyToID(propertyName);
-      return GetVectorArray(propertyName, isInstanced);
+      return GetVectorArray(propertyName);
     }
 
     public Vector4[] GetVectorArray(
-      int propertyId,
-      bool isInstanced)
+      int propertyId)
     {
-      if (isInstanced)
+      if (instancedProperties.Contains(propertyId))
       {
         return materialPropertyBlock.GetVectorArray(propertyId);
       }
