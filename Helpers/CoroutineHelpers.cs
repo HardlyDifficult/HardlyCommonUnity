@@ -6,14 +6,17 @@ namespace HD
   public static class CoroutineHelpers
   {
     public static IEnumerator WithSleepIf(
-      IEnumerator routine, 
+      IEnumerator routine,
       Func<bool> sleepIf)
     {
-      while(routine.MoveNext())
+      if (routine != null)
       {
-        if(sleepIf())
+        while (routine.MoveNext())
         {
-          yield return routine.Current;
+          if (sleepIf())
+          {
+            yield return routine.Current;
+          }
         }
       }
     }
