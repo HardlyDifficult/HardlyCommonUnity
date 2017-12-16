@@ -58,6 +58,12 @@
     <Compile Include="Extensions\VectorExtensions.cs" />
     <Compile Include="Renderering\InstancedMaterial.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ValueTupleForDotNet3_5\ValueTuple\ValueTuple.csproj">
+      <Project>{d3263834-f24b-404c-8a70-02a9e1451cdc}</Project>
+      <Name>ValueTuple</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy /y "$(TargetDir)*" "$(SolutionDir)UnityTest\Assets\Scripts\Dependancies\"
