@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\EventType.cs" />
+    <Compile Include="Data\FloatRange.cs" />
     <Compile Include="Data\Layer.cs" />
     <Compile Include="Data\Sort\RaycastHitSortByPointMag.cs" />
     <Compile Include="Extensions\BoundsExtensions.cs" />
