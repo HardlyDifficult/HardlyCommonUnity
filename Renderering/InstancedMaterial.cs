@@ -17,7 +17,7 @@ namespace HD
     /// </summary>
     public readonly Renderer renderer;
 
-    static readonly int 
+    static readonly int
       mainColorPropertyId,
       mainTexturePropertyId;
 
@@ -183,8 +183,26 @@ namespace HD
       return instancedMaterialList;
     }
 
+    public static InstancedMaterial[] GetMaterials(
+      Renderer[] rendererList)
+    {
+      List<InstancedMaterial> instancedMaterialList = new List<InstancedMaterial>();
+      for (int iRenderer = 0; iRenderer < rendererList.Length; iRenderer++)
+      {
+        Renderer renderer = rendererList[iRenderer];
+        Material[] materialList = renderer.sharedMaterials;
+        for (int iMaterial = 0; iMaterial < materialList.Length; iMaterial++)
+        {
+          instancedMaterialList.Add(
+            new InstancedMaterial(renderer, materialList[iMaterial]));
+        }
+      }
+
+      return instancedMaterialList.ToArray();
+    }
+
     InstancedMaterial(
-      Renderer renderer) 
+      Renderer renderer)
       : this(renderer, renderer.sharedMaterial) { }
 
     InstancedMaterial(

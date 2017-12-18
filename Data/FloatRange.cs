@@ -10,10 +10,10 @@ namespace SpaceTrade.Scripts
   public class FloatRange
   {
     [SerializeField]
-    float _minInclusive;
+    float _minInclusive = 0;
 
     [SerializeField]
-    float _maxInclusive;
+    float _maxInclusive = 0;
 
     public float minInclusive
     {

@@ -45,6 +45,7 @@
     <Compile Include="Data\FloatRange.cs" />
     <Compile Include="Data\Layer.cs" />
     <Compile Include="Data\Sort\RaycastHitSortByPointMag.cs" />
+    <Compile Include="Debug.cs" />
     <Compile Include="Extensions\BoundsExtensions.cs" />
     <Compile Include="Helpers\CoroutineHelpers.cs" />
     <Compile Include="Extensions\LayerMaskExtensions.cs" />

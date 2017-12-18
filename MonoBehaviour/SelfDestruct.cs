@@ -9,6 +9,7 @@ namespace HD
 
     protected void Start()
     {
+      Debug.Log($"Destroy {gameObject} in {timeTillDeath}");
       Destroy(gameObject, timeTillDeath);
     }
   }
