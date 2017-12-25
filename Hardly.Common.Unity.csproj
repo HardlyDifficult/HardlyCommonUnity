@@ -47,6 +47,7 @@
     <Compile Include="Data\Sort\RaycastHitSortByPointMag.cs" />
     <Compile Include="Debug.cs" />
     <Compile Include="Extensions\BoundsExtensions.cs" />
+    <Compile Include="Extensions\TransformExtensions.cs" />
     <Compile Include="Helpers\CoroutineHelpers.cs" />
     <Compile Include="Extensions\LayerMaskExtensions.cs" />
     <Compile Include="MonoBehaviour\OnXDoY.cs" />

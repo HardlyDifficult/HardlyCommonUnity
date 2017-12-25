@@ -1,12 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using UnityEngine;
 
-namespace HD.Extensions
+namespace HD
 {
-  class TransformExtensions
+  public static class TransformExtensions
   {
+    public static Transform[] GetAllChildsWithName(
+      this Transform transform, 
+      string name)
+    {
+      List<Transform> collection = new List<Transform>();
+
+      for (int i = 0; i < transform.childCount; i++)
+      {
+        if (transform.GetChild(i).name == name)
+        {
+          collection.Add(transform.GetChild(i));
+        }
+      }
+
+      return collection.ToArray();
+    }
   }
 }
